@@ -200,8 +200,35 @@ def map_categorical_data(spark_df, input_column, output_column):
 
     return cast_column(mapped_df, output_column, "integer")
 
-def one_hot_encoding(spark_df, input_column):
-    pass
+# def _ohe_extract(row):
+#     return tuple(map(lambda x: row[x], row.__fields__)) + tuple(row['col_idx_vec'].toArray().tolist())
+
+# def one_hot_encoding(spark_df, input_column, input_column_indexed):
+#     output_column = "col_idx_vec"
+
+#     # rename columns to ensure output deterministic
+#     spark_df = spark_df.withColumnRenamed(input_column, "col") \
+#         .withColumnRenamed(input_column_indexed, "col_idx")
+
+#     ohe_cat = OneHotEncoder(inputCol="col_idx", outputCol=output_column)
+#     ohe_cat.setDropLast(False)
+
+#     ohe_cat_df = ohe_cat.fit(spark_df).transform(spark_df)
+#     colIdx = ohe_cat_df.select("col","col_idx").distinct().rdd.collectAsMap()
+#     colIdx =  sorted((value, "ls_" + key) for (key, value) in colIdx.items())
+#     newCols = list(map(lambda x: x[1], colIdx))
+#     actualCol = ohe_cat_df.columns
+#     allColNames = actualCol + newCols
+
+#     result = ohe_cat_df.rdd.map(_ohe_extract).toDF(allColNames)    
+#     for col in newCols:
+#         result = result.withColumn(col, result[col].cast("int"))
+
+#     # rename columns back to original names
+#     result_df = ohe_cat_df.withColumnRenamed("col", input_column) \
+#         .withColumnRenamed("col_idx", input_column_indexed) 
+
+#     return result_df
 
 def convert_timestamp_format(
         spark_df,
