@@ -1,9 +1,45 @@
-from pyspark.ml.feature import OneHotEncoder
+from pyspark_helper.common import cast_column
+from pyspark.ml.feature import OneHotEncoder, StringIndexer
+
+
+def map_categorical_data(spark_df, input_column, output_column):
+    """
+    Map categorical data into integer labels using pyspark.ml.feature StringIndexer.
+
+    :param spark_df: spark dataframe
+    :param input_column: name of the column with categorical data
+    :param output_column: name of the column which holds the labels of the `input` column
+
+    :returns: spark dataframe with additional `output` column which holds the labels of the `input` column
+    """
+
+    stringIndexer = StringIndexer(
+        inputCol=input_column,
+        outputCol=output_column)
+    mapped_df = stringIndexer.fit(spark_df).transform(spark_df)
+
+    return cast_column(mapped_df, output_column, "integer")
 
 def _ohe_extract(row):
+    """
+    Private function for one_hot_encoding() to extract the OHE vector into multiple columns.
+
+    :param row: one of the rows of the original data frame that only has one additional column (OHE vector)
+
+    :returns: a new row with additional columns after mapping the OHE vector into multiple columns
+    """
     return tuple(map(lambda x: row[x], row.__fields__)) + tuple(row['col_idx_vec'].toArray().tolist())
 
 def one_hot_encoding(spark_df, input_column, input_column_indexed):
+    """
+    Performs one-hot encoding on a categorical data column after numerical mapping.
+
+    :param spark_df: spark dataframe
+    :param input_column: name of the column before numerical mapping
+    :param input_column_indexed: name of the column after numerical mapping
+
+    :returns: a spark dataframe with additional columns after one-hot encoding
+    """
     output_column = "col_idx_vec"
 
     # rename columns to ensure output deterministic
@@ -38,4 +74,3 @@ def one_hot_encoding(spark_df, input_column, input_column_indexed):
         .withColumnRenamed("col_idx_vec", f"{input_column}_vec")
 
     return result_df
-    
