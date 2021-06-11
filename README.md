@@ -1,7 +1,7 @@
 # README
 
 ## Intro
-`pyspark_helper.py` is a Python module that consists of some of my commonly executed transformation defined as functions. There is a Jupyter notebook `example.ipynb` that demonstrates the functionalities of `pyspark_helper.py`.
+`pyspark_helper` is a Python module that consists of some of my commonly executed transformation defined as functions. There is a Jupyter notebook `example.ipynb` that demonstrates the functionalities of `pyspark_helper`.
 
 ## Using venv in Jupyter notebook
 - Include the following lines in the notebook
